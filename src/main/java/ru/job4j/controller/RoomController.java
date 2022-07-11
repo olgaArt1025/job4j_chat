@@ -3,6 +3,7 @@ package ru.job4j.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Room;
 import ru.job4j.service.RoomService;
 
@@ -24,12 +25,11 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Room> findById(@PathVariable int id) {
+    public Room findById(@PathVariable int id) {
         var room = this.rooms.findById(id);
-        return new ResponseEntity<Room>(
-                room.orElse(new Room()),
-                room.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
-        );
+                return room.orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Room is not found."
+                ));
     }
 
     @PostMapping("/")
