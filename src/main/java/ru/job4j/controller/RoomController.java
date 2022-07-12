@@ -53,4 +53,17 @@ public class RoomController {
         this.rooms.delete(room);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/patch")
+    public ResponseEntity<Room> patch(@RequestBody Room room) {
+        var current = rooms.findById(room.getId());
+        current.orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Room is not found."
+        ));
+        if (room.getName() != null) {
+            current.get().setName(room.getName());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(rooms.save(current.get()));
+    }
 }

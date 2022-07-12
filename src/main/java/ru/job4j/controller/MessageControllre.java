@@ -1,8 +1,5 @@
 package ru.job4j.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.model.Message;
 
-import ru.job4j.model.Role;
 import ru.job4j.service.MessageService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,4 +60,26 @@ public class MessageControllre {
         this.messages.delete(message);
         return ResponseEntity.ok().build();
     }
+
+    @PatchMapping("/patch")
+    public ResponseEntity<Optional<Message>> patch(@RequestBody Message message)
+                                              throws InvocationTargetException, IllegalAccessException {
+        var current = messages.findById(message.getId());
+        if (current.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message is not found.");
+        }
+        if (message.getMessage() != null) {
+            current.get().setMessage(message.getMessage());
+        }
+        if (message.getRoom() != null) {
+            current.get().setRoom(message.getRoom());
+        }
+        if (message.getPerson() != null) {
+                current.get().setPerson(message.getPerson());
+        }
+        messages.save(current.get());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(current);
+    }
+
 }
