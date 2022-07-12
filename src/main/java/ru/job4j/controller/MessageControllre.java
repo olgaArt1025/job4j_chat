@@ -15,6 +15,7 @@ import ru.job4j.model.Role;
 import ru.job4j.service.MessageService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/message")
@@ -24,16 +25,18 @@ public class MessageControllre {
     private MessageService messages;
 
     @GetMapping("/")
-    public List<Message> findAll() {
-        return messages.findAll();
-    }
+    public ResponseEntity<List<Message>> findAll() {
+        return ResponseEntity.of(Optional.of(messages.findAll()));
+        }
 
     @GetMapping("/{id}")
-    public Message findById(@PathVariable int id) {
+    public ResponseEntity<Optional<Message>> findById(@PathVariable int id) {
         var message = this.messages.findById(id);
-        return message.orElseThrow(() -> new ResponseStatusException(
+         message.orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Message is not found."
         ));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(message);
     }
 
     @PostMapping("/")
@@ -41,7 +44,7 @@ public class MessageControllre {
         if (message.getRoom() == null || message.getPerson() == null) {
             throw new NullPointerException("The message parameters room or person can't be empty");
         }
-        return new ResponseEntity<Message>(
+        return new ResponseEntity<>(
                 this.messages.save(message),
                 HttpStatus.CREATED
         );
