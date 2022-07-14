@@ -10,6 +10,7 @@ import ru.job4j.model.Message;
 
 import ru.job4j.service.MessageService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class MessageControllre {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Message> create(@RequestBody Message message) {
+    public ResponseEntity<Message> create(@Valid @RequestBody Message message) {
         if (message.getRoom() == null || message.getPerson() == null) {
             throw new NullPointerException("The message parameters room or person can't be empty");
         }
@@ -48,7 +49,7 @@ public class MessageControllre {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Message message) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Message message) {
         this.messages.save(message);
         return ResponseEntity.ok().build();
     }

@@ -9,6 +9,7 @@ import ru.job4j.model.Person;
 import ru.job4j.model.Role;
 import ru.job4j.service.PersonService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
+    public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         return new ResponseEntity<Person>(
                 this.persons.save(person),
                 HttpStatus.CREATED

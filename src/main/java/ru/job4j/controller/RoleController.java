@@ -8,6 +8,7 @@ import ru.job4j.model.Role;
 import ru.job4j.model.Room;
 import ru.job4j.service.RoleService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,7 +36,7 @@ public class RoleController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Role> create(@RequestBody Role role) {
+    public ResponseEntity<Role> create(@Valid @RequestBody Role role) {
         return new ResponseEntity<Role>(
                 this.roles.save(role),
                 HttpStatus.CREATED
@@ -43,7 +44,7 @@ public class RoleController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Role room) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Role room) {
         this.roles.save(room);
         return ResponseEntity.ok().build();
     }
